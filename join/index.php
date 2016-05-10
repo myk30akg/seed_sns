@@ -46,7 +46,8 @@
   }
 
     //書き直し
-      if($_REQUEST['action'] == 'rewrite') {
+    //issetでactionがあるか確認している(初回のindex.phpではactionはないから)
+      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'rewrite') {
         $_POST = $_SESSION['join'];
         $error['rewrite'] = true;
       }
