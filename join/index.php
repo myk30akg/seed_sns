@@ -45,6 +45,12 @@
     }
   }
 
+    //書き直し
+      if($_REQUEST['action'] == 'rewrite') {
+        $_POST = $_SESSION['join'];
+        $error['rewrite'] = true;
+      }
+
 
 
  ?>
