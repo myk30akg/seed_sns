@@ -56,7 +56,7 @@
           下記ボタンよりログインして下さい。
         </div>
         <!-- ../の後にパスがない場合、１つ上の階層にファイルがあるかアパッチが判断する -->
-        <a href="../" class="btn btn-default">ログイン</a>
+        <a href="login.php" class="btn btn-default">ログイン</a>
       </div>
     </div>
   </div>

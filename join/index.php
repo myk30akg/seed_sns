@@ -1,5 +1,7 @@
 <!-- 5/5 ↓のphpタグ追加 -->
 <?php 
+  require('../dbconnect.php');
+
   //セッションを使うページに必ず入れる
   session_start();
 
@@ -31,11 +33,22 @@
       }
     }
 
+    //5月11日に追加
+    //重複アカウントのチェック
+      if(empty($error)){
+        $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s"',mysqli_real_escape_string($db, $_POST['email']));
+        $record = mysqli_query($db, $sql) or die (mysqli_error($db));
+        $table = mysqli_fetch_assoc($record);
+        if($table['cnt'] > 0) {
+          $error['email'] = 'duplicate';
+        }
+      }
+
     //エラーがない場合
     if(empty($error)){
       //画像をアップロードする
       $picture = date('YmdHis').$_FILES['picture_path']['name'];
-      move_uploaded_file($_FILES['picture_path']['tmp_name'],'../member_picture'. $picture );
+      move_uploaded_file($_FILES['picture_path']['tmp_name'],'../member_picture/'. $picture );
 
       //いちばん上にsession_start()がないと存在できない
       $_SESSION['join'] = $_POST;
@@ -48,6 +61,8 @@
     //書き直し
     //issetでactionがあるか確認している(初回のindex.phpではactionはないから)
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'rewrite') {
+        //$_REQUESTスーパーグローバル変数
+        //$_GETと$_POSTなどのスーパーグローバル変数を含む変数！ 
         $_POST = $_SESSION['join'];
         $error['rewrite'] = true;
       }
@@ -139,8 +154,11 @@
               <?php endif; ?>
 
             <?php if(isset($error['email']) && $error['email'] == 'blank'): ?>
-                <p class="error">＊メールアドレスを入力してください</p>
+              <p class="error">＊メールアドレスを入力してください</p>
               <?php endif; ?>
+              <?php if(isset($error['email']) && $error['email'] == 'duplicate'): ?>
+              <p class="error">＊指定されたメールアドレスはすでに登録されています</p>
+              <?php endif;?>
               <!-- :endifでphpの処理を分けることができる -->
             </div>
           </div>
