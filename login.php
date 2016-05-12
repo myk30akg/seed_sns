@@ -83,7 +83,12 @@
           <div class="form-group">
             <label class="col-sm-4 control-label">メールアドレス</label>
             <div class="col-sm-8">
-              <input type="email" name="email" class="form-control" placeholder="例： seed@nex.com" >
+
+              <?php if(isset($_POST['email'])): ?>
+                <input type="email" name="email" class="form-control" placeholder="例： seed@nex.com" value="<?php echo htmlspecialchars($_POST['email']); ?>" >
+              <?php else: ?>
+                <input type="email" name="email" class="form-control" placeholder="例： seed@nex.com" value="" >
+              <?php endif; ?>
               <!-- ↓入れるとエラーになる  -->
               <!-- value="<?php //echo htmlspecialchars($_POST['email']); ?>" / -->
               <?php if(isset($error['login']) && $error['login'] == 'blank'): ?>
@@ -98,7 +103,13 @@
           <div class="form-group">
             <label class="col-sm-4 control-label">パスワード</label>
             <div class="col-sm-8">
-              <input type="password" name="password" class="form-control" placeholder="" >
+
+              <?php if(isset($_POST['password'])): ?>
+              <input type="password" name="password" class="form-control" placeholder="" value="<?php echo htmlspecialchars($_POST['password']); ?>" >
+              <?php else: ?>
+                <input type="password" name="password" class="form-control" placeholder="" value="" >
+              <?php endif; ?>
+
               <!-- ↓入れるとエラーになる  -->
               <!-- value="<?php //echo htmlspecialchars($_POST['password']); ?>" / -->
             </div>
