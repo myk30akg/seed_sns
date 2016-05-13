@@ -1,25 +1,54 @@
 <?php 
-  require('../dbconnect.php');
+  require('dbconnect.php');
 
   session_start();
 
+  //自動ログイン処理
+  if(isset($_COOKIE['email']) && $_COOKIE['email'] != ''){
+    $_POST['email'] = $_COOKIE['email'];
+    $_POST['password'] = $_COOKIE['password'];
+    $_POST['save'] = 'on';
+  }
+
+  //ログインボタンを押した際に読まれるコード
   if(!empty($_POST)){
     //ログインの処理
+    //「!=''」空ではない
+    //ふたつのフォームに値が入力されていれば読まれる
     if($_POST['email'] !='' && $_POST['password'] !=''){
+
+      //emailとパスワードが入力された値と一致するデータをSELECT文で取得
       $sql = sprintf('SELECT * FROM members WHERE email="%s" AND password="%s"',
 
         mysqli_real_escape_string($db, $_POST['email']),
         mysqli_real_escape_string($db, sha1($_POST['password']))
         );
 
+      //$recordにmysqli_query()関数を使用してデータを格納
       $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+
+      //SELECT文で取得したデータが存在するかそうかで条件分岐している
       if($table = mysqli_fetch_assoc($record)){
-        //ログイン成功
-        $_SESSION['id'] = $table['id'];
+        
+        //ログイン成功のとき(データが存在したとき)
+        //次のページでログイン判定をするために使用するidをSESSIONで管理
+        $_SESSION['id'] = $table['member_id'];
         $_SESSION['time'] = time();
+
+        //ログイン情報を記録する
+        if($_POST['save'] == 'on'){
+          //クッキーはsetcookie()関数を使用して、保持する値と保持したい期間を引数に与える
+          setcookie('email', $_POST['email'], time()+60*60*24*14);
+          setcookie('password', $_POST['password'], time()+60*60*24*14);
+          //setcookie('キー', 値, 期間);
+          //↓
+          //$_COOKIE = array('email'=>$_POST['email'], 'password'=>$_POST['password']);
+        }
+
         header('Location: index.php');
         exit();
       }else{
+        //ログイン失敗(データが存在しないとき)
         $error['login'] = 'failed';
       }
     }else{
@@ -37,11 +66,11 @@
     <title>SeedSNS</title>
 
     <!-- Bootstrap -->
-    <link href="../assets/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="../assets/css/form.css" rel="stylesheet">
-    <link href="../assets/css/timeline.css" rel="stylesheet">
-    <link href="../assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="assets/css/form.css" rel="stylesheet">
+    <link href="assets/css/timeline.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

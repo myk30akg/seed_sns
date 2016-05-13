@@ -8,6 +8,7 @@
   $error = Array();
 
   //フォームからデータが送信された場合(よく使う)
+  //ボタンが押されたときに発動
   if(!empty($_POST)){
 
     //エラー項目の確認
@@ -35,10 +36,19 @@
 
     //5月11日に追加
     //重複アカウントのチェック
+    //
       if(empty($error)){
+        //わからなくなったら$sql='SELECT * members WHERE email="メールアドレス"で確認できる'
+        //sql文をコピーしてphpmyadminで実行してみる
         $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s"',mysqli_real_escape_string($db, $_POST['email']));
         $record = mysqli_query($db, $sql) or die (mysqli_error($db));
         $table = mysqli_fetch_assoc($record);
+        //echo $table;
+        //$table=array('COUNT(*)'=>'1');
+        //ASを使うと・・・↓
+        //$table=array('cnt'=>'1');
+
+        //もし $table['cnt']が1以上を返せば、アカウントが重複しているとみなして$errorを生成する
         if($table['cnt'] > 0) {
           $error['email'] = 'duplicate';
         }
